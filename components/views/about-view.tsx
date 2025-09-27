@@ -1,14 +1,23 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Users, Code, Database, Globe } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Users, Code, Database, Globe } from "lucide-react";
 
 export function AboutView() {
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Acerca del Proyecto</h1>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Acerca del Proyecto
+        </h1>
         <p className="text-muted-foreground text-lg">
-          Sistema de gestión CRUD para animales desarrollado con Next.js y SpringBoot
+          Sistema de gestión CRUD para animales desarrollado con Next.js y
+          SpringBoot
         </p>
       </div>
 
@@ -20,12 +29,16 @@ export function AboutView() {
               <Users className="h-5 w-5" />
               Equipo de Desarrollo
             </CardTitle>
-            <CardDescription>Información sobre los desarrolladores del proyecto</CardDescription>
+            <CardDescription>
+              Información sobre los desarrolladores del proyecto
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <h4 className="font-semibold">Desarrollador Principal</h4>
               <p className="text-sm text-muted-foreground">Santiago Manchola</p>
+              <p className="text-sm text-muted-foreground">Oscar Casallas</p>
+              <p className="text-sm text-muted-foreground">Andres Nieto</p>
+              <p className="text-sm text-muted-foreground">Jose Hidalgo</p>
             </div>
             <div>
               <h4 className="font-semibold">Tecnologías Utilizadas</h4>
@@ -46,7 +59,9 @@ export function AboutView() {
               <Code className="h-5 w-5" />
               Información Técnica
             </CardTitle>
-            <CardDescription>Detalles sobre la arquitectura y funcionalidades</CardDescription>
+            <CardDescription>
+              Detalles sobre la arquitectura y funcionalidades
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -56,9 +71,9 @@ export function AboutView() {
             <div>
               <h4 className="font-semibold">Funcionalidades</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Crear animales (PUT)</li>
+                <li>• Crear animales (POST)</li>
                 <li>• Listar todos con filtros (GET)</li>
-                <li>• Buscar y editar (POST)</li>
+                <li>• Buscar y editar (PUT)</li>
                 <li>• Buscar y eliminar (DELETE)</li>
               </ul>
             </div>
@@ -78,16 +93,17 @@ export function AboutView() {
             <div className="bg-muted p-4 rounded-lg font-mono text-sm">
               <div className="space-y-1">
                 <div>
-                  <span className="text-blue-600">id:</span> string
+                  <span className="text-blue-600">id:</span> int
                 </div>
                 <div>
                   <span className="text-blue-600">name:</span> string
                 </div>
                 <div>
-                  <span className="text-blue-600">species:</span> string
+                  <span className="text-blue-600">weight:</span> double
                 </div>
                 <div>
-                  <span className="text-blue-600">age:</span> number
+                  <span className="text-blue-600">birthDateTime:</span>{" "}
+                  LocalDateTime
                 </div>
                 <div>
                   <span className="text-blue-600">isWild:</span> boolean
@@ -104,12 +120,17 @@ export function AboutView() {
               <Globe className="h-5 w-5" />
               API Backend
             </CardTitle>
-            <CardDescription>Información sobre la API de SpringBoot</CardDescription>
+            <CardDescription>
+              Información sobre la API de SpringBoot
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <h4 className="font-semibold">Estado</h4>
-              <Badge variant="outline" className="text-orange-600 border-orange-600">
+              <Badge
+                variant="outline"
+                className="text-orange-600 border-orange-600"
+              >
                 En Desarrollo
               </Badge>
             </div>
@@ -117,14 +138,15 @@ export function AboutView() {
               <h4 className="font-semibold">Endpoints Planeados</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
                 <li>• GET /api/animals</li>
-                <li>• POST /api/animals/search</li>
-                <li>• PUT /api/animals</li>
-                <li>• DELETE /api/animals/{"{id}"}</li>
+                <li>• GET /api/animals/:id</li>
+                <li>• POST /api/animals</li>
+                <li>• PUT /api/animals/:id</li>
+                <li>• DELETE /api/animals/:id</li>
               </ul>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }
