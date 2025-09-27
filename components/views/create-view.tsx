@@ -1,81 +1,116 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import type { AnimalFormData } from "@/types/animal"
-import { Plus, AlertCircle, CheckCircle } from "lucide-react"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { AnimalFormData } from "@/types/animal";
+import { Plus, AlertCircle, CheckCircle } from "lucide-react";
+import { createAnimal } from "@/lib/utils";
 
 export function CreateView() {
   const [formData, setFormData] = useState<AnimalFormData>({
     id: 0,
-    nombre: "",
-    peso: 0,
+    name: "",
+    weight: 0,
     birthDateTime: "",
     isWild: false,
-  })
-  const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setMessage(null)
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage(null);
 
-    if (!formData.nombre.trim()) {
-      setMessage({ type: "error", text: "El nombre es requerido" })
-      setIsLoading(false)
-      return
+    if (!formData.name.trim()) {
+      setMessage({ type: "error", text: "El nombre es requerido" });
+      setIsLoading(false);
+      return;
     }
     if (formData.id <= 0) {
-      setMessage({ type: "error", text: "El ID debe ser un número positivo" })
-      setIsLoading(false)
-      return
+      setMessage({ type: "error", text: "El ID debe ser un número positivo" });
+      setIsLoading(false);
+      return;
     }
-    if (formData.peso <= 0) {
-      setMessage({ type: "error", text: "El peso debe ser mayor a 0 kg" })
-      setIsLoading(false)
-      return
+    if (formData.weight <= 0) {
+      setMessage({ type: "error", text: "El peso debe ser mayor a 0 kg" });
+      setIsLoading(false);
+      return;
     }
     if (!formData.birthDateTime) {
-      setMessage({ type: "error", text: "La fecha y hora de nacimiento es requerida" })
-      setIsLoading(false)
-      return
+      setMessage({
+        type: "error",
+        text: "La fecha y hora de nacimiento es requerida",
+      });
+      setIsLoading(false);
+      return;
     }
 
     try {
-      console.log("[v0] Creating animal:", formData)
-
-      // Simular delay de API
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      setMessage({ type: "success", text: `Animal "${formData.nombre}" creado exitosamente con ID: ${formData.id}` })
-
-      setFormData({
-        id: 0,
-        nombre: "",
-        peso: 0,
-        birthDateTime: "",
-        isWild: false,
-      })
+      // Ajustar formato de fecha para incluir los segundos
+      let birthDateTime = formData.birthDateTime;
+      if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(birthDateTime)) {
+        birthDateTime += ":00";
+      }
+      const result = await createAnimal({ ...formData, birthDateTime });
+      if (result && (result as any).error409) {
+        setMessage({
+          type: "error",
+          text: "Ya existe un animal con ese ID. Por favor usa otro número.",
+        });
+      } else if (result) {
+        setMessage({
+          type: "success",
+          text: `Animal "${result.name}" creado exitosamente con ID: ${result.id}`,
+        });
+        setFormData({
+          id: 0,
+          name: "",
+          weight: 0,
+          birthDateTime: "",
+          isWild: false,
+        });
+      } else {
+        setMessage({
+          type: "error",
+          text: "Error al crear el animal. Intenta nuevamente.",
+        });
+      }
     } catch (error) {
-      setMessage({ type: "error", text: "Error al crear el animal. Intenta nuevamente." })
+      setMessage({
+        type: "error",
+        text: "Error al crear el animal. Intenta nuevamente.",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="p-8 max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Crear Nuevo Animal</h1>
-        <p className="text-muted-foreground">Completa el formulario para agregar un nuevo animal al sistema</p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Crear Nuevo Animal
+        </h1>
+        <p className="text-muted-foreground">
+          Completa el formulario para agregar un nuevo animal al sistema
+        </p>
       </div>
 
       <Card>
@@ -96,7 +131,12 @@ export function CreateView() {
                   type="number"
                   placeholder="Ej: 12345678"
                   value={formData.id || ""}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, id: Number.parseInt(e.target.value) || 0 }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      id: Number.parseInt(e.target.value) || 0,
+                    }))
+                  }
                   required
                 />
               </div>
@@ -107,8 +147,10 @@ export function CreateView() {
                   id="nombre"
                   type="text"
                   placeholder="Ej: León, Perro, Gato..."
-                  value={formData.nombre}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, nombre: e.target.value }))}
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, name: e.target.value }))
+                  }
                   required
                 />
               </div>
@@ -123,19 +165,31 @@ export function CreateView() {
                   step="0.1"
                   min="0"
                   placeholder="Ej: 25.5"
-                  value={formData.peso || ""}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, peso: Number.parseFloat(e.target.value) || 0 }))}
+                  value={formData.weight || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      weight: Number.parseFloat(e.target.value) || 0,
+                    }))
+                  }
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="birthDateTime">Fecha y Hora de Nacimiento</Label>
+                <Label htmlFor="birthDateTime">
+                  Fecha y Hora de Nacimiento
+                </Label>
                 <Input
                   id="birthDateTime"
                   type="datetime-local"
                   value={formData.birthDateTime}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, birthDateTime: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      birthDateTime: e.target.value,
+                    }))
+                  }
                   required
                 />
               </div>
@@ -145,14 +199,26 @@ export function CreateView() {
               <Switch
                 id="isWild"
                 checked={formData.isWild}
-                onCheckedChange={(checked) => setFormData((prev) => ({ ...prev, isWild: checked }))}
+                onCheckedChange={(checked) =>
+                  setFormData((prev) => ({ ...prev, isWild: checked }))
+                }
               />
               <Label htmlFor="isWild">¿Es un animal salvaje?</Label>
             </div>
 
             {message && (
-              <Alert className={message.type === "error" ? "border-destructive" : "border-green-500"}>
-                {message.type === "error" ? <AlertCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+              <Alert
+                className={
+                  message.type === "error"
+                    ? "border-destructive"
+                    : "border-green-500"
+                }
+              >
+                {message.type === "error" ? (
+                  <AlertCircle className="h-4 w-4" />
+                ) : (
+                  <CheckCircle className="h-4 w-4" />
+                )}
                 <AlertDescription>{message.text}</AlertDescription>
               </Alert>
             )}
@@ -164,5 +230,5 @@ export function CreateView() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
