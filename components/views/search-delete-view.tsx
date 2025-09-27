@@ -20,14 +20,14 @@ export function SearchDeleteView() {
 
   // Datos de ejemplo para demostración
   const mockAnimals: Animal[] = [
-    { id: "animal_1", name: "León", species: "Panthera leo", age: 5, isWild: true },
-    { id: "animal_2", name: "Perro", species: "Canis lupus familiaris", age: 3, isWild: false },
-    { id: "animal_3", name: "Tigre", species: "Panthera tigris", age: 7, isWild: true },
+    { id: 12345, nombre: "León", peso: 190.5, birthDateTime: "2019-03-15T10:30", isWild: true },
+    { id: 67890, nombre: "Perro", peso: 25.3, birthDateTime: "2021-07-22T14:15", isWild: false },
+    { id: 11111, nombre: "Tigre", peso: 220.8, birthDateTime: "2017-11-08T09:45", isWild: true },
   ]
 
   const handleSearch = async () => {
-    if (!searchId.trim()) {
-      setMessage({ type: "error", text: "Por favor ingresa un ID para buscar" })
+    if (!searchId.trim() || isNaN(Number(searchId))) {
+      setMessage({ type: "error", text: "Por favor ingresa un ID numérico válido" })
       return
     }
 
@@ -38,12 +38,12 @@ export function SearchDeleteView() {
 
     try {
       // Simular llamada a API (POST /api/animals/search)
-      console.log("[v0] Searching animal with ID:", searchId)
+      console.log("[v0] Searching animal with ID:", Number(searchId))
 
       // Simular delay de API
       await new Promise((resolve) => setTimeout(resolve, 800))
 
-      const animal = mockAnimals.find((a) => a.id === searchId)
+      const animal = mockAnimals.find((a) => a.id === Number(searchId))
 
       if (animal) {
         setFoundAnimal(animal)
@@ -73,7 +73,7 @@ export function SearchDeleteView() {
 
       setMessage({
         type: "success",
-        text: `Animal "${foundAnimal.name}" (ID: ${foundAnimal.id}) eliminado exitosamente`,
+        text: `Animal "${foundAnimal.nombre}" (ID: ${foundAnimal.id}) eliminado exitosamente`,
       })
 
       // Limpiar estado
@@ -109,15 +109,15 @@ export function SearchDeleteView() {
               <Search className="h-5 w-5" />
               Buscar Animal
             </CardTitle>
-            <CardDescription>Ingresa el ID del animal que deseas eliminar</CardDescription>
+            <CardDescription>Ingresa el ID numérico del animal que deseas eliminar</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="searchId">ID del Animal</Label>
               <Input
                 id="searchId"
-                type="text"
-                placeholder="Ej: animal_1, animal_2..."
+                type="number"
+                placeholder="Ej: 12345, 67890..."
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
               />
@@ -136,23 +136,14 @@ export function SearchDeleteView() {
             <div className="text-xs text-muted-foreground">
               <p className="font-medium mb-1">IDs de ejemplo para probar:</p>
               <div className="space-y-1">
-                <button
-                  onClick={() => setSearchId("animal_1")}
-                  className="block hover:text-foreground transition-colors"
-                >
-                  animal_1 (León)
+                <button onClick={() => setSearchId("12345")} className="block hover:text-foreground transition-colors">
+                  12345 (León)
                 </button>
-                <button
-                  onClick={() => setSearchId("animal_2")}
-                  className="block hover:text-foreground transition-colors"
-                >
-                  animal_2 (Perro)
+                <button onClick={() => setSearchId("67890")} className="block hover:text-foreground transition-colors">
+                  67890 (Perro)
                 </button>
-                <button
-                  onClick={() => setSearchId("animal_3")}
-                  className="block hover:text-foreground transition-colors"
-                >
-                  animal_3 (Tigre)
+                <button onClick={() => setSearchId("11111")} className="block hover:text-foreground transition-colors">
+                  11111 (Tigre)
                 </button>
               </div>
             </div>
@@ -177,15 +168,15 @@ export function SearchDeleteView() {
                 </div>
                 <div>
                   <span className="font-medium">Nombre:</span>
-                  <span className="ml-2 text-lg font-semibold">{foundAnimal.name}</span>
+                  <span className="ml-2 text-lg font-semibold">{foundAnimal.nombre}</span>
                 </div>
                 <div>
-                  <span className="font-medium">Especie:</span>
-                  <span className="ml-2 italic">{foundAnimal.species}</span>
+                  <span className="font-medium">Peso:</span>
+                  <span className="ml-2">{foundAnimal.peso} kg</span>
                 </div>
                 <div>
-                  <span className="font-medium">Edad:</span>
-                  <span className="ml-2">{foundAnimal.age} años</span>
+                  <span className="font-medium">Fecha de Nacimiento:</span>
+                  <span className="ml-2">{new Date(foundAnimal.birthDateTime).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-medium">Tipo:</span>
@@ -205,7 +196,7 @@ export function SearchDeleteView() {
                   <Alert className="border-destructive">
                     <AlertTriangle className="h-4 w-4" />
                     <AlertDescription>
-                      <strong>¿Estás seguro?</strong> Esta acción no se puede deshacer. El animal "{foundAnimal.name}"
+                      <strong>¿Estás seguro?</strong> Esta acción no se puede deshacer. El animal "{foundAnimal.nombre}"
                       será eliminado permanentemente del sistema.
                     </AlertDescription>
                   </Alert>

@@ -14,9 +14,10 @@ import { Plus, AlertCircle, CheckCircle } from "lucide-react"
 
 export function CreateView() {
   const [formData, setFormData] = useState<AnimalFormData>({
-    name: "",
-    species: "",
-    age: 0,
+    id: 0,
+    nombre: "",
+    peso: 0,
+    birthDateTime: "",
     isWild: false,
   })
   const [isLoading, setIsLoading] = useState(false)
@@ -27,43 +28,40 @@ export function CreateView() {
     setIsLoading(true)
     setMessage(null)
 
-    // Validaciones
-    if (!formData.name.trim()) {
+    if (!formData.nombre.trim()) {
       setMessage({ type: "error", text: "El nombre es requerido" })
       setIsLoading(false)
       return
     }
-    if (!formData.species.trim()) {
-      setMessage({ type: "error", text: "La especie es requerida" })
+    if (formData.id <= 0) {
+      setMessage({ type: "error", text: "El ID debe ser un número positivo" })
       setIsLoading(false)
       return
     }
-    if (formData.age < 0) {
-      setMessage({ type: "error", text: "La edad debe ser un número positivo" })
+    if (formData.peso <= 0) {
+      setMessage({ type: "error", text: "El peso debe ser mayor a 0 kg" })
+      setIsLoading(false)
+      return
+    }
+    if (!formData.birthDateTime) {
+      setMessage({ type: "error", text: "La fecha y hora de nacimiento es requerida" })
       setIsLoading(false)
       return
     }
 
     try {
-      // Generar ID único
-      const newAnimal = {
-        ...formData,
-        id: `animal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      }
-
-      // Simular llamada a API (PUT /api/animals)
-      console.log("[v0] Creating animal:", newAnimal)
+      console.log("[v0] Creating animal:", formData)
 
       // Simular delay de API
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      setMessage({ type: "success", text: `Animal "${formData.name}" creado exitosamente con ID: ${newAnimal.id}` })
+      setMessage({ type: "success", text: `Animal "${formData.nombre}" creado exitosamente con ID: ${formData.id}` })
 
-      // Limpiar formulario
       setFormData({
-        name: "",
-        species: "",
-        age: 0,
+        id: 0,
+        nombre: "",
+        peso: 0,
+        birthDateTime: "",
         isWild: false,
       })
     } catch (error) {
@@ -92,41 +90,55 @@ export function CreateView() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="name">Nombre</Label>
+                <Label htmlFor="id">ID (Identificador)</Label>
                 <Input
-                  id="name"
-                  type="text"
-                  placeholder="Ej: León, Perro, Gato..."
-                  value={formData.name}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  id="id"
+                  type="number"
+                  placeholder="Ej: 12345678"
+                  value={formData.id || ""}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, id: Number.parseInt(e.target.value) || 0 }))}
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="species">Especie</Label>
+                <Label htmlFor="nombre">Nombre</Label>
                 <Input
-                  id="species"
+                  id="nombre"
                   type="text"
-                  placeholder="Ej: Panthera leo, Canis lupus..."
-                  value={formData.species}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, species: e.target.value }))}
+                  placeholder="Ej: León, Perro, Gato..."
+                  value={formData.nombre}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, nombre: e.target.value }))}
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="age">Edad (años)</Label>
-              <Input
-                id="age"
-                type="number"
-                min="0"
-                placeholder="0"
-                value={formData.age}
-                onChange={(e) => setFormData((prev) => ({ ...prev, age: Number.parseInt(e.target.value) || 0 }))}
-                required
-              />
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="peso">Peso (kg)</Label>
+                <Input
+                  id="peso"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  placeholder="Ej: 25.5"
+                  value={formData.peso || ""}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, peso: Number.parseFloat(e.target.value) || 0 }))}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="birthDateTime">Fecha y Hora de Nacimiento</Label>
+                <Input
+                  id="birthDateTime"
+                  type="datetime-local"
+                  value={formData.birthDateTime}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, birthDateTime: e.target.value }))}
+                  required
+                />
+              </div>
             </div>
 
             <div className="flex items-center space-x-2">

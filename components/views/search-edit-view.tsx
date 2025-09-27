@@ -7,27 +7,26 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import type { Animal, AnimalFormData } from "@/types/animal"
+import type { Animal, AnimalEditData } from "@/types/animal"
 import { Search, Edit, AlertCircle, CheckCircle } from "lucide-react"
 
 export function SearchEditView() {
   const [searchId, setSearchId] = useState("")
   const [foundAnimal, setFoundAnimal] = useState<Animal | null>(null)
-  const [editData, setEditData] = useState<AnimalFormData | null>(null)
+  const [editData, setEditData] = useState<AnimalEditData | null>(null)
   const [isSearching, setIsSearching] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null)
 
-  // Datos de ejemplo para demostración
   const mockAnimals: Animal[] = [
-    { id: "animal_1", name: "León", species: "Panthera leo", age: 5, isWild: true },
-    { id: "animal_2", name: "Perro", species: "Canis lupus familiaris", age: 3, isWild: false },
-    { id: "animal_3", name: "Tigre", species: "Panthera tigris", age: 7, isWild: true },
+    { id: 12345, nombre: "León", peso: 190.5, birthDateTime: "2019-03-15T10:30", isWild: true },
+    { id: 67890, nombre: "Perro", peso: 25.3, birthDateTime: "2021-07-22T14:15", isWild: false },
+    { id: 11111, nombre: "Tigre", peso: 220.8, birthDateTime: "2017-11-08T09:45", isWild: true },
   ]
 
   const handleSearch = async () => {
-    if (!searchId.trim()) {
-      setMessage({ type: "error", text: "Por favor ingresa un ID para buscar" })
+    if (!searchId.trim() || isNaN(Number(searchId))) {
+      setMessage({ type: "error", text: "Por favor ingresa un ID numérico válido" })
       return
     }
 
@@ -37,20 +36,20 @@ export function SearchEditView() {
     setEditData(null)
 
     try {
-      // Simular llamada a API (POST /api/animals/search)
-      console.log("[v0] Searching animal with ID:", searchId)
+      console.log("[v0] Searching animal with ID:", Number(searchId))
 
       // Simular delay de API
       await new Promise((resolve) => setTimeout(resolve, 800))
 
-      const animal = mockAnimals.find((a) => a.id === searchId)
+      const animal = mockAnimals.find((a) => a.id === Number(searchId))
 
       if (animal) {
         setFoundAnimal(animal)
         setEditData({
-          name: animal.name,
-          species: animal.species,
-          age: animal.age,
+          id: animal.id,
+          nombre: animal.nombre,
+          peso: animal.peso,
+          birthDateTime: animal.birthDateTime,
           isWild: animal.isWild,
         })
         setMessage({ type: "success", text: "Animal encontrado exitosamente" })
@@ -67,17 +66,16 @@ export function SearchEditView() {
   const handleEdit = async () => {
     if (!foundAnimal || !editData) return
 
-    // Validaciones
-    if (!editData.name.trim()) {
+    if (!editData.nombre.trim()) {
       setMessage({ type: "error", text: "El nombre es requerido" })
       return
     }
-    if (!editData.species.trim()) {
-      setMessage({ type: "error", text: "La especie es requerida" })
+    if (editData.peso <= 0) {
+      setMessage({ type: "error", text: "El peso debe ser mayor a 0 kg" })
       return
     }
-    if (editData.age < 0) {
-      setMessage({ type: "error", text: "La edad debe ser un número positivo" })
+    if (!editData.birthDateTime) {
+      setMessage({ type: "error", text: "La fecha y hora de nacimiento es requerida" })
       return
     }
 
@@ -85,16 +83,15 @@ export function SearchEditView() {
     setMessage(null)
 
     try {
-      // Simular llamada a API (PUT /api/animals/{id})
-      console.log("[v0] Updating animal:", { ...editData, id: foundAnimal.id })
+      console.log("[v0] Updating animal:", editData)
 
       // Simular delay de API
       await new Promise((resolve) => setTimeout(resolve, 1000))
 
-      setMessage({ type: "success", text: `Animal "${editData.name}" actualizado exitosamente` })
+      setMessage({ type: "success", text: `Animal "${editData.nombre}" actualizado exitosamente` })
 
       // Actualizar el animal encontrado
-      setFoundAnimal({ ...foundAnimal, ...editData })
+      setFoundAnimal({ ...editData })
     } catch (error) {
       setMessage({ type: "error", text: "Error al actualizar el animal. Intenta nuevamente." })
     } finally {
@@ -117,15 +114,15 @@ export function SearchEditView() {
               <Search className="h-5 w-5" />
               Buscar Animal
             </CardTitle>
-            <CardDescription>Ingresa el ID del animal que deseas editar</CardDescription>
+            <CardDescription>Ingresa el ID numérico del animal que deseas editar</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="searchId">ID del Animal</Label>
               <Input
                 id="searchId"
-                type="text"
-                placeholder="Ej: animal_1, animal_2..."
+                type="number"
+                placeholder="Ej: 12345, 67890..."
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
               />
@@ -135,27 +132,17 @@ export function SearchEditView() {
               {isSearching ? "Buscando..." : "Buscar Animal"}
             </Button>
 
-            {/* IDs de ejemplo */}
             <div className="text-xs text-muted-foreground">
               <p className="font-medium mb-1">IDs de ejemplo para probar:</p>
               <div className="space-y-1">
-                <button
-                  onClick={() => setSearchId("animal_1")}
-                  className="block hover:text-foreground transition-colors"
-                >
-                  animal_1 (León)
+                <button onClick={() => setSearchId("12345")} className="block hover:text-foreground transition-colors">
+                  12345 (León)
                 </button>
-                <button
-                  onClick={() => setSearchId("animal_2")}
-                  className="block hover:text-foreground transition-colors"
-                >
-                  animal_2 (Perro)
+                <button onClick={() => setSearchId("67890")} className="block hover:text-foreground transition-colors">
+                  67890 (Perro)
                 </button>
-                <button
-                  onClick={() => setSearchId("animal_3")}
-                  className="block hover:text-foreground transition-colors"
-                >
-                  animal_3 (Tigre)
+                <button onClick={() => setSearchId("11111")} className="block hover:text-foreground transition-colors">
+                  11111 (Tigre)
                 </button>
               </div>
             </div>
@@ -179,15 +166,15 @@ export function SearchEditView() {
               </div>
               <div>
                 <span className="font-medium">Nombre:</span>
-                <span className="ml-2">{foundAnimal.name}</span>
+                <span className="ml-2">{foundAnimal.nombre}</span>
               </div>
               <div>
-                <span className="font-medium">Especie:</span>
-                <span className="ml-2 italic">{foundAnimal.species}</span>
+                <span className="font-medium">Peso:</span>
+                <span className="ml-2">{foundAnimal.peso} kg</span>
               </div>
               <div>
-                <span className="font-medium">Edad:</span>
-                <span className="ml-2">{foundAnimal.age} años</span>
+                <span className="font-medium">Fecha de Nacimiento:</span>
+                <span className="ml-2">{new Date(foundAnimal.birthDateTime).toLocaleString()}</span>
               </div>
               <div>
                 <span className="font-medium">Tipo:</span>
@@ -206,42 +193,50 @@ export function SearchEditView() {
               <Edit className="h-5 w-5" />
               Editar Información
             </CardTitle>
-            <CardDescription>Modifica los campos que desees actualizar</CardDescription>
+            <CardDescription>Modifica los campos que desees actualizar (el ID no se puede editar)</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="editName">Nombre</Label>
-                <Input
-                  id="editName"
-                  type="text"
-                  value={editData.name}
-                  onChange={(e) => setEditData((prev) => (prev ? { ...prev, name: e.target.value } : null))}
-                />
+                <Label htmlFor="editId">ID (Solo lectura)</Label>
+                <Input id="editId" type="number" value={editData.id} disabled className="bg-muted" />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="editSpecies">Especie</Label>
+                <Label htmlFor="editNombre">Nombre</Label>
                 <Input
-                  id="editSpecies"
+                  id="editNombre"
                   type="text"
-                  value={editData.species}
-                  onChange={(e) => setEditData((prev) => (prev ? { ...prev, species: e.target.value } : null))}
+                  value={editData.nombre}
+                  onChange={(e) => setEditData((prev) => (prev ? { ...prev, nombre: e.target.value } : null))}
                 />
               </div>
             </div>
 
-            <div className="space-y-2 mt-4">
-              <Label htmlFor="editAge">Edad (años)</Label>
-              <Input
-                id="editAge"
-                type="number"
-                min="0"
-                value={editData.age}
-                onChange={(e) =>
-                  setEditData((prev) => (prev ? { ...prev, age: Number.parseInt(e.target.value) || 0 } : null))
-                }
-              />
+            <div className="grid gap-4 md:grid-cols-2 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="editPeso">Peso (kg)</Label>
+                <Input
+                  id="editPeso"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  value={editData.peso || ""}
+                  onChange={(e) =>
+                    setEditData((prev) => (prev ? { ...prev, peso: Number.parseFloat(e.target.value) || 0 } : null))
+                  }
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="editBirthDateTime">Fecha y Hora de Nacimiento</Label>
+                <Input
+                  id="editBirthDateTime"
+                  type="datetime-local"
+                  value={editData.birthDateTime}
+                  onChange={(e) => setEditData((prev) => (prev ? { ...prev, birthDateTime: e.target.value } : null))}
+                />
+              </div>
             </div>
 
             <div className="flex items-center space-x-2 mt-4">

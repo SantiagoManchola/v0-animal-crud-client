@@ -14,19 +14,17 @@ export function ListAllView() {
   const [filter, setFilter] = useState<"all" | "wild" | "domestic">("all")
   const [isLoading, setIsLoading] = useState(false)
 
-  // Datos de ejemplo para demostración
   const mockAnimals: Animal[] = [
-    { id: "animal_1", name: "León", species: "Panthera leo", age: 5, isWild: true },
-    { id: "animal_2", name: "Perro", species: "Canis lupus familiaris", age: 3, isWild: false },
-    { id: "animal_3", name: "Tigre", species: "Panthera tigris", age: 7, isWild: true },
-    { id: "animal_4", name: "Gato", species: "Felis catus", age: 2, isWild: false },
-    { id: "animal_5", name: "Elefante", species: "Loxodonta africana", age: 15, isWild: true },
+    { id: 12345, nombre: "León", peso: 190.5, birthDateTime: "2019-03-15T10:30", isWild: true },
+    { id: 67890, nombre: "Perro", peso: 25.3, birthDateTime: "2021-07-22T14:15", isWild: false },
+    { id: 11111, nombre: "Tigre", peso: 220.8, birthDateTime: "2017-11-08T09:45", isWild: true },
+    { id: 22222, nombre: "Gato", peso: 4.2, birthDateTime: "2022-01-10T16:20", isWild: false },
+    { id: 33333, nombre: "Elefante", peso: 5400.0, birthDateTime: "2009-05-03T08:15", isWild: true },
   ]
 
   const fetchAnimals = async () => {
     setIsLoading(true)
     try {
-      // Simular llamada a API (GET /api/animals?filter=...)
       console.log("[v0] Fetching animals with filter:", filter)
 
       // Simular delay de API
@@ -129,7 +127,7 @@ export function ListAllView() {
                         ) : (
                           <Home className="h-5 w-5 text-blue-600" />
                         )}
-                        <h3 className="font-semibold text-lg">{animal.name}</h3>
+                        <h3 className="font-semibold text-lg">{animal.nombre}</h3>
                       </div>
                       <Badge variant={animal.isWild ? "default" : "secondary"}>
                         {animal.isWild ? "Salvaje" : "Doméstico"}
@@ -138,13 +136,13 @@ export function ListAllView() {
 
                     <div className="space-y-2 text-sm">
                       <div>
-                        <span className="font-medium">Especie:</span>
-                        <p className="text-muted-foreground italic">{animal.species}</p>
+                        <span className="font-medium">Peso:</span>
+                        <span className="text-muted-foreground ml-1">{animal.peso} kg</span>
                       </div>
                       <div>
-                        <span className="font-medium">Edad:</span>
+                        <span className="font-medium">Nacimiento:</span>
                         <span className="text-muted-foreground ml-1">
-                          {animal.age} {animal.age === 1 ? "año" : "años"}
+                          {new Date(animal.birthDateTime).toLocaleDateString()}
                         </span>
                       </div>
                       <div>
