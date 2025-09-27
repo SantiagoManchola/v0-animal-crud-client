@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -9,6 +10,29 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Code, Database, Globe } from "lucide-react";
 
 export function AboutView() {
+  const [apiStatus, setApiStatus] = useState<"online" | "offline" | "checking">(
+    "checking"
+  );
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const checkHealth = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/health");
+        if (res.ok) {
+          setApiStatus("online");
+        } else {
+          setApiStatus("offline");
+        }
+      } catch {
+        setApiStatus("offline");
+      }
+    };
+    checkHealth();
+    interval = setInterval(checkHealth, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="p-8 max-w-4xl mx-auto">
       <div className="mb-8">
@@ -127,12 +151,30 @@ export function AboutView() {
           <CardContent className="space-y-4">
             <div>
               <h4 className="font-semibold">Estado</h4>
-              <Badge
-                variant="outline"
-                className="text-orange-600 border-orange-600"
-              >
-                En Desarrollo
-              </Badge>
+              {apiStatus === "checking" && (
+                <Badge
+                  variant="outline"
+                  className="text-gray-600 border-gray-600"
+                >
+                  Verificando...
+                </Badge>
+              )}
+              {apiStatus === "online" && (
+                <Badge
+                  variant="outline"
+                  className="text-green-600 border-green-600"
+                >
+                  API Activa
+                </Badge>
+              )}
+              {apiStatus === "offline" && (
+                <Badge
+                  variant="outline"
+                  className="text-red-600 border-red-600"
+                >
+                  API Inactiva
+                </Badge>
+              )}
             </div>
             <div>
               <h4 className="font-semibold">Endpoints Planeados</h4>
@@ -142,6 +184,12 @@ export function AboutView() {
                 <li>• POST /api/animals</li>
                 <li>• PUT /api/animals/:id</li>
                 <li>• DELETE /api/animals/:id</li>
+                <li>
+                  • GET /health{" "}
+                  <span className="text-xs text-gray-500">
+                    (Estado del servidor)
+                  </span>
+                </li>
               </ul>
             </div>
           </CardContent>
