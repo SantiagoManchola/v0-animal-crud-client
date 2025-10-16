@@ -1,15 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import type { Animal, AnimalEditData } from "@/types/animal"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import type { Animal, AnimalEditData, Habitat } from "@/types/animal"
 import { updateAnimal } from "@/lib/utils"
-import { Edit, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react"
+import { Edit, AlertCircle, CheckCircle, ArrowLeft, MapPin } from "lucide-react"
 
 interface EditViewProps {
   animal: Animal
@@ -23,12 +24,70 @@ export function EditView({ animal, onBack }: EditViewProps) {
     weight: animal.weight,
     birthDateTime: animal.birthDateTime,
     isWild: animal.isWild,
+    habitatId: animal.habitatId, // Added habitatId
   })
+  const [habitats, setHabitats] = useState<Habitat[]>([])
   const [isEditing, setIsEditing] = useState(false)
   const [message, setMessage] = useState<{
     type: "success" | "error"
     text: string
   } | null>(null)
+
+  useEffect(() => {
+    fetchHabitats()
+  }, [])
+
+  const fetchHabitats = async () => {
+    // TODO: Uncomment when API is ready
+    /*
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats`)
+      if (response.ok) {
+        const data = await response.json()
+        setHabitats(data)
+      }
+    } catch (error) {
+      console.error('Error fetching habitats:', error)
+    }
+    */
+
+    // Temporary: Mock data
+    const mockHabitats: Habitat[] = [
+      {
+        id: 1001,
+        name: "Sabana Africana",
+        area: 2500.5,
+        establishedDate: "2020-03-15T10:00:00",
+        isVisitorAccessible: true,
+        isCovered: false,
+      },
+      {
+        id: 1002,
+        name: "Bosque Tropical",
+        area: 1800.75,
+        establishedDate: "2019-07-22T14:30:00",
+        isVisitorAccessible: true,
+        isCovered: true,
+      },
+      {
+        id: 1003,
+        name: "Área de Cuarentena",
+        area: 500.0,
+        establishedDate: "2021-01-10T09:00:00",
+        isVisitorAccessible: false,
+        isCovered: true,
+      },
+      {
+        id: 1004,
+        name: "Acuario Principal",
+        area: 3200.0,
+        establishedDate: "2018-11-05T11:00:00",
+        isVisitorAccessible: true,
+        isCovered: true,
+      },
+    ]
+    setHabitats(mockHabitats)
+  }
 
   const handleEdit = async () => {
     if (!editData.name.trim()) {
@@ -43,6 +102,13 @@ export function EditView({ animal, onBack }: EditViewProps) {
       setMessage({
         type: "error",
         text: "La fecha y hora de nacimiento es requerida",
+      })
+      return
+    }
+    if (editData.habitatId <= 0) {
+      setMessage({
+        type: "error",
+        text: "Debes seleccionar un habitat",
       })
       return
     }
@@ -146,6 +212,33 @@ export function EditView({ animal, onBack }: EditViewProps) {
                 }
               />
             </div>
+          </div>
+
+          <div className="space-y-2 mt-4">
+            <Label htmlFor="editHabitat" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Habitat
+            </Label>
+            <Select
+              value={editData.habitatId.toString()}
+              onValueChange={(value) =>
+                setEditData((prev) => ({
+                  ...prev,
+                  habitatId: Number.parseInt(value) || 0,
+                }))
+              }
+            >
+              <SelectTrigger id="editHabitat">
+                <SelectValue placeholder="Selecciona un habitat" />
+              </SelectTrigger>
+              <SelectContent>
+                {habitats.map((habitat) => (
+                  <SelectItem key={habitat.id} value={habitat.id.toString()}>
+                    {habitat.name} - {habitat.area.toFixed(2)} m²
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex items-center space-x-2 mt-4">
