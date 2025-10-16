@@ -13,15 +13,15 @@ interface SidebarProps {
 const animalMenuItems = [
   { id: "create" as ViewType, label: "Crear Animal", icon: Plus },
   { id: "list" as ViewType, label: "Listar Todos", icon: List },
-  { id: "edit" as ViewType, label: "Buscar para Editar", icon: Edit },
-  { id: "delete" as ViewType, label: "Buscar para Eliminar", icon: Trash2 },
+  { id: "search-edit" as ViewType, label: "Buscar para Editar", icon: Edit },
+  { id: "search-delete" as ViewType, label: "Buscar para Eliminar", icon: Trash2 },
 ]
 
 const habitatMenuItems = [
   { id: "create-habitat" as ViewType, label: "Crear Habitat", icon: Plus },
   { id: "list-habitats" as ViewType, label: "Listar Todos", icon: List },
-  { id: "edit-habitat" as ViewType, label: "Buscar para Editar", icon: Edit },
-  { id: "delete-habitat" as ViewType, label: "Buscar para Eliminar", icon: Trash2 },
+  { id: "search-edit-habitat" as ViewType, label: "Buscar para Editar", icon: Edit },
+  { id: "search-delete-habitat" as ViewType, label: "Buscar para Eliminar", icon: Trash2 },
 ]
 
 export function Sidebar({ currentView, onViewChange }: SidebarProps) {
