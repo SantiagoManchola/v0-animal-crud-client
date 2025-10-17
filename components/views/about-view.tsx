@@ -45,7 +45,7 @@ export function AboutView() {
         </p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-1">
         {/* Información del Equipo */}
         <Card>
           <CardHeader>
@@ -76,34 +76,6 @@ export function AboutView() {
           </CardContent>
         </Card>
 
-        {/* Información Técnica */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Code className="h-5 w-5" />
-              Información Técnica
-            </CardTitle>
-            <CardDescription>
-              Detalles sobre la arquitectura y funcionalidades
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <h4 className="font-semibold">Versión</h4>
-              <p className="text-sm text-muted-foreground">v1.0.0</p>
-            </div>
-            <div>
-              <h4 className="font-semibold">Funcionalidades</h4>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                <li>• Crear animales (POST)</li>
-                <li>• Listar todos con filtros (GET)</li>
-                <li>• Buscar y editar (PUT)</li>
-                <li>• Buscar y eliminar (DELETE)</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Modelo de Datos */}
         <Card>
           <CardHeader>
@@ -115,6 +87,7 @@ export function AboutView() {
           </CardHeader>
           <CardContent>
             <div className="bg-muted p-4 rounded-lg font-mono text-sm">
+              <span className="text-blue-600">Animal</span>
               <div className="space-y-1">
                 <div>
                   <span className="text-blue-600">id:</span> int
@@ -131,6 +104,32 @@ export function AboutView() {
                 </div>
                 <div>
                   <span className="text-blue-600">isWild:</span> boolean
+                </div>
+                <div>
+                  <span className="text-blue-600">Habitat:</span> habitat
+                </div>
+              </div>
+            </div>
+          </CardContent>
+          <CardContent>
+            <div className="bg-muted p-4 rounded-lg font-mono text-sm">
+              <span className="text-blue-600">Habitat</span>
+              <div className="space-y-1">
+                <div>
+                  <span className="text-blue-600">id:</span> int
+                </div>
+                <div>
+                  <span className="text-blue-600">name:</span> string
+                </div>
+                <div>
+                  <span className="text-blue-600">area:</span> double
+                </div>
+                <div>
+                  <span className="text-blue-600">establishedDate:</span>{" "}
+                  LocalDateTime
+                </div>
+                <div>
+                  <span className="text-blue-600">isCovered:</span> boolean
                 </div>
               </div>
             </div>
@@ -176,14 +175,27 @@ export function AboutView() {
                 </Badge>
               )}
             </div>
-            <div>
+            <div className="space-y-4">
               <h4 className="font-semibold">Endpoints Planeados</h4>
               <ul className="text-sm text-muted-foreground space-y-1">
+                <span>Animales</span>
                 <li>• GET /api/animals</li>
                 <li>• GET /api/animals/:id</li>
                 <li>• POST /api/animals</li>
                 <li>• PUT /api/animals/:id</li>
                 <li>• DELETE /api/animals/:id</li>
+              </ul>
+
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <span>Habitat</span>
+                <li>• GET /api/habitat</li>
+                <li>• GET /api/habitat/:id</li>
+                <li>• POST /api/habitat</li>
+                <li>• PUT /api/habitat/:id</li>
+                <li>• DELETE /api/habitat/:id</li>
+              </ul>
+
+              <ul className="text-sm text-muted-foreground space-y-1">
                 <li>
                   • GET /health{" "}
                   <span className="text-xs text-gray-500">

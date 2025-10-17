@@ -1,45 +1,66 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import type { Animal, Habitat } from "@/types"
-import { fetchAnimals as fetchAnimalsAPI } from "@/lib/utils"
-import { List, Filter, TreePine, Home, MapPin } from "lucide-react"
+import { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import type { Animal, Habitat } from "@/types";
+import { fetchAnimals as fetchAnimalsAPI } from "@/lib/utils";
+import { List, Filter, TreePine, Home, MapPin } from "lucide-react";
 
 export function ListAllView() {
-  const [animals, setAnimals] = useState<Animal[]>([])
-  const [habitats, setHabitats] = useState<Habitat[]>([])
-  const [filter, setFilter] = useState<"all" | "wild" | "no_wild">("all")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [animals, setAnimals] = useState<Animal[]>([]);
+  const [habitats, setHabitats] = useState<Habitat[]>([]);
+  const [filter, setFilter] = useState<"all" | "wild" | "no_wild">("all");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchAnimals(filter)
-    fetchHabitats()
-  }, [filter])
+    fetchAnimals(filter);
+    fetchHabitats();
+  }, [filter]);
 
-  const fetchAnimals = async (selectedFilter: "all" | "wild" | "no_wild" = filter) => {
-    setIsLoading(true)
-    setError(null)
+  const fetchAnimals = async (
+    selectedFilter: "all" | "wild" | "no_wild" = filter
+  ) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const data = await fetchAnimalsAPI(selectedFilter)
+      const data = await fetchAnimalsAPI(selectedFilter);
       if (!data) {
-        setError("No se pudo obtener la lista de animales del servidor.")
-        setAnimals([])
+        setError("No se pudo obtener la lista de animales del servidor.");
+        setAnimals([]);
       } else {
-        setAnimals(data)
+        setAnimals(data);
       }
     } catch (err) {
-      setError("Error al obtener animales.")
-      setAnimals([])
+      setError("Error al obtener animales.");
+      setAnimals([]);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const fetchHabitats = async () => {
     // TODO: Uncomment when API is ready
@@ -89,23 +110,31 @@ export function ListAllView() {
         isVisitorAccessible: true,
         isCovered: true,
       },
-    ]
-    setHabitats(mockHabitats)
-  }
+    ];
+    setHabitats(mockHabitats);
+  };
 
   const getHabitatName = (habitatId: number) => {
-    const habitat = habitats.find((h) => h.id === habitatId)
-    return habitat ? habitat.name : "Sin habitat"
-  }
+    const habitat = habitats.find((h) => h.id === habitatId);
+    return habitat ? habitat.name : "Sin habitat";
+  };
 
-  const filteredAnimals = animals
+  const filteredAnimals = animals;
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">Lista de Animales</h1>
-        <p className="text-muted-foreground">Visualiza todos los animales registrados en el sistema</p>
-        {error && <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          Lista de Animales
+        </h1>
+        <p className="text-muted-foreground">
+          Visualiza todos los animales registrados en el sistema
+        </p>
+        {error && (
+          <div className="mt-4 p-3 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
       </div>
 
       {/* Filtros */}
@@ -119,7 +148,12 @@ export function ListAllView() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4">
-            <Select value={filter} onValueChange={(value: "all" | "wild" | "no_wild") => setFilter(value)}>
+            <Select
+              value={filter}
+              onValueChange={(value: "all" | "wild" | "no_wild") =>
+                setFilter(value)
+              }
+            >
               <SelectTrigger className="w-48">
                 <SelectValue placeholder="Seleccionar filtro" />
               </SelectTrigger>
@@ -129,9 +163,6 @@ export function ListAllView() {
                 <SelectItem value="no_wild">No salvajes</SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={() => fetchAnimals(filter)} disabled={isLoading}>
-              {isLoading ? "Cargando..." : "Actualizar"}
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -160,7 +191,9 @@ export function ListAllView() {
           ) : filteredAnimals.length === 0 ? (
             <div className="text-center py-8">
               <List className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">No se encontraron animales con el filtro seleccionado</p>
+              <p className="text-muted-foreground">
+                No se encontraron animales con el filtro seleccionado
+              </p>
             </div>
           ) : (
             <div className="rounded-md border">
@@ -178,7 +211,9 @@ export function ListAllView() {
                 <TableBody>
                   {filteredAnimals.map((animal) => (
                     <TableRow key={animal.id}>
-                      <TableCell className="font-mono text-sm">{animal.id}</TableCell>
+                      <TableCell className="font-mono text-sm">
+                        {animal.id}
+                      </TableCell>
                       <TableCell className="font-medium">
                         <div className="flex items-center gap-2">
                           {animal.isWild ? (
@@ -190,7 +225,9 @@ export function ListAllView() {
                         </div>
                       </TableCell>
                       <TableCell>{animal.weight}</TableCell>
-                      <TableCell>{new Date(animal.birthDateTime).toLocaleString()}</TableCell>
+                      <TableCell>
+                        {new Date(animal.birthDateTime).toLocaleString()}
+                      </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1 text-sm">
                           <MapPin className="h-3 w-3 text-muted-foreground" />
@@ -198,7 +235,9 @@ export function ListAllView() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={animal.isWild ? "default" : "secondary"}>
+                        <Badge
+                          variant={animal.isWild ? "default" : "secondary"}
+                        >
                           {animal.isWild ? "Salvaje" : "No salvaje"}
                         </Badge>
                       </TableCell>
@@ -211,5 +250,5 @@ export function ListAllView() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
