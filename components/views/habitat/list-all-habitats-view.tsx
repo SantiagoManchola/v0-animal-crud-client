@@ -27,78 +27,25 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import type { Habitat } from "@/types/habitat";
+import { fetchHabitats } from "@/lib/utils";
 
 export function ListAllHabitatsView() {
   const [habitats, setHabitats] = useState<Habitat[]>([]);
-  const [filter, setFilter] = useState<"all" | "covered" | "not-covered">(
+  const [filter, setFilter] = useState<"all" | "covered" | "not_covered">(
     "all"
   );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchHabitats();
+    loadHabitats();
   }, [filter]);
 
-  const fetchHabitats = async () => {
+  const loadHabitats = async () => {
     setLoading(true);
-
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const filterParam = filter === "all" ? "" : `?isVisitorAccessible=${filter === "accessible"}`
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats${filterParam}`)
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch habitats')
-      }
-      
-      const data = await response.json()
-      setHabitats(data)
-    } catch (error) {
-      console.error('Error fetching habitats:', error)
-    } finally {
-      setLoading(false)
+    const data = await fetchHabitats(filter);
+    if (data) {
+      setHabitats(data);
     }
-    */
-
-    // Temporary: Mock data
-    const mockHabitats: Habitat[] = [
-      {
-        id: 1001,
-        name: "Sabana Africana",
-        area: 2500.5,
-        establishedDate: "2020-03-15T10:00:00",
-        isCovered: false,
-      },
-      {
-        id: 1002,
-        name: "Bosque Tropical",
-        area: 1800.75,
-        establishedDate: "2019-07-22T14:30:00",
-        isCovered: true,
-      },
-      {
-        id: 1003,
-        name: "Área de Cuarentena",
-        area: 500.0,
-        establishedDate: "2021-01-10T09:00:00",
-        isCovered: true,
-      },
-      {
-        id: 1004,
-        name: "Acuario Principal",
-        area: 3200.0,
-        establishedDate: "2018-11-05T11:00:00",
-        isCovered: true,
-      },
-    ];
-
-    const filteredHabitats =
-      filter === "all"
-        ? mockHabitats
-        : mockHabitats.filter((h) => h.isCovered === (filter === "covered"));
-
-    setHabitats(filteredHabitats);
     setLoading(false);
   };
 
@@ -148,7 +95,7 @@ export function ListAllHabitatsView() {
                 <SelectContent>
                   <SelectItem value="all">Todos los habitats</SelectItem>
                   <SelectItem value="covered">Solo cubiertos</SelectItem>
-                  <SelectItem value="not-covered">Solo no cubiertos</SelectItem>
+                  <SelectItem value="not_covered">Solo no cubiertos</SelectItem>
                 </SelectContent>
               </Select>
             </div>

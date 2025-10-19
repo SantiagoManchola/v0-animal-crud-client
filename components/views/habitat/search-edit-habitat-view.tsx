@@ -14,9 +14,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Search, Edit, CheckCircle2, TreePine } from "lucide-react";
+import { Edit, Search, CheckCircle2, TreePine } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import type { Habitat, HabitatEditData } from "@/types/habitat";
+import { fetchHabitatById, updateHabitat } from "@/lib/utils";
 
 export function SearchEditHabitatView() {
   const [searchId, setSearchId] = useState("");
@@ -33,49 +34,19 @@ export function SearchEditHabitatView() {
     setEditData(null);
     setSuccess(false);
 
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${searchId}`)
-      
-      if (!response.ok) {
-        throw new Error('Habitat not found')
-      }
-      
-      const data = await response.json()
-      setHabitat(data)
+    const data = await fetchHabitatById(Number.parseInt(searchId));
+
+    if (data) {
+      setHabitat(data);
       setEditData({
         id: data.id,
         name: data.name,
         area: data.area,
-        establishedDate: data.establishedDate,
-        isVisitorAccessible: data.isVisitorAccessible,
+        establishedDate: data.establishedDate.slice(0, 16), // Format for datetime-local input
         isCovered: data.isCovered,
-      })
-    } catch (error) {
-      console.error('Error fetching habitat:', error)
-    } finally {
-      setLoading(false)
+      });
     }
-    */
 
-    // Temporary: Mock data
-    const mockHabitat: Habitat = {
-      id: Number.parseInt(searchId),
-      name: "Sabana Africana",
-      area: 2500.5,
-      establishedDate: "2020-03-15T10:00:00",
-      isCovered: false,
-    };
-
-    setHabitat(mockHabitat);
-    setEditData({
-      id: mockHabitat.id,
-      name: mockHabitat.name,
-      area: mockHabitat.area,
-      establishedDate: mockHabitat.establishedDate,
-      isCovered: mockHabitat.isCovered,
-    });
     setLoading(false);
   };
 
@@ -85,36 +56,27 @@ export function SearchEditHabitatView() {
 
     setSuccess(false);
 
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${editData.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editData),
-      })
-      
-      if (!response.ok) {
-        throw new Error('Failed to update habitat')
-      }
-      
-      const data = await response.json()
-      console.log('Habitat updated:', data)
-      setSuccess(true)
-    } catch (error) {
-      console.error('Error updating habitat:', error)
+    // Format establishedDate to include seconds if not present
+    let establishedDate = editData.establishedDate;
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(establishedDate)) {
+      establishedDate += ":00";
     }
-    */
 
-    // Temporary: Simulate success
-    console.log("Habitat updated (simulated):", editData);
-    setSuccess(true);
+    const dataToSend = {
+      ...editData,
+      establishedDate,
+    };
 
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3000);
+    const result = await updateHabitat(dataToSend);
+
+    if (result) {
+      console.log("Habitat updated:", result);
+      setSuccess(true);
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+    }
   };
 
   return (

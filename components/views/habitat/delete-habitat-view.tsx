@@ -7,6 +7,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import type { Habitat } from "@/types/habitat"
 import { Trash2, AlertTriangle, CheckCircle, AlertCircle, ArrowLeft, TreePine, Shield } from "lucide-react"
+import { deleteHabitat } from "@/lib/utils"
 
 interface DeleteHabitatViewProps {
   habitat: Habitat
@@ -26,31 +27,9 @@ export function DeleteHabitatView({ habitat, onBack, onDeleted }: DeleteHabitatV
     setIsDeleting(true)
     setMessage(null)
 
-    try {
-      // TODO: Uncomment when API is ready
-      /*
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${habitat.id}`, {
-        method: 'DELETE',
-      })
-      
-      if (response.ok) {
-        setMessage({
-          type: "success",
-          text: `Habitat "${habitat.name}" (ID: ${habitat.id}) eliminado exitosamente`,
-        })
-        setTimeout(() => {
-          onDeleted()
-        }, 2000)
-      } else {
-        setMessage({
-          type: "error",
-          text: "Error al eliminar el habitat. Intenta nuevamente.",
-        })
-      }
-      */
+    const result = await deleteHabitat(habitat.id)
 
-      // Temporary: Simulate success
-      console.log("Habitat deleted (simulated):", habitat.id)
+    if (result) {
       setMessage({
         type: "success",
         text: `Habitat "${habitat.name}" (ID: ${habitat.id}) eliminado exitosamente`,
@@ -58,14 +37,14 @@ export function DeleteHabitatView({ habitat, onBack, onDeleted }: DeleteHabitatV
       setTimeout(() => {
         onDeleted()
       }, 2000)
-    } catch (error) {
+    } else {
       setMessage({
         type: "error",
         text: "Error al eliminar el habitat. Intenta nuevamente.",
       })
-    } finally {
-      setIsDeleting(false)
     }
+
+    setIsDeleting(false)
   }
 
   return (

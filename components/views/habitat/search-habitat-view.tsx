@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import type { Habitat } from "@/types/habitat"
 import { Search, AlertCircle, CheckCircle, TreePine, Shield } from "lucide-react"
+import { fetchHabitatById } from "@/lib/utils"
 
 interface SearchHabitatViewProps {
   onHabitatFound: (habitat: Habitat) => void
@@ -39,71 +40,22 @@ export function SearchHabitatView({ onHabitatFound, title, description, actionLa
     setMessage(null)
     setFoundHabitat(null)
 
-    try {
-      // TODO: Uncomment when API is ready
-      /*
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${searchId}`)
-      if (response.ok) {
-        const habitat = await response.json()
-        setFoundHabitat(habitat)
-        setMessage({
-          type: "success",
-          text: "Habitat encontrado exitosamente",
-        })
-      } else {
-        setMessage({
-          type: "error",
-          text: "No se encontró ningún habitat con ese ID",
-        })
-      }
-      */
+    const habitat = await fetchHabitatById(Number(searchId))
 
-      // Temporary: Mock data
-      const mockHabitats: Habitat[] = [
-        {
-          id: 1001,
-          name: "Sabana Africana",
-          area: 2500.5,
-          establishedDate: "2020-03-15T10:00:00",
-          isCovered: false,
-        },
-        {
-          id: 1002,
-          name: "Bosque Tropical",
-          area: 1800.75,
-          establishedDate: "2019-07-22T14:30:00",
-          isCovered: true,
-        },
-        {
-          id: 1003,
-          name: "Área de Cuarentena",
-          area: 500.0,
-          establishedDate: "2021-01-10T09:00:00",
-          isCovered: true,
-        },
-      ]
-
-      const habitat = mockHabitats.find((h) => h.id === Number(searchId))
-      if (habitat) {
-        setFoundHabitat(habitat)
-        setMessage({
-          type: "success",
-          text: "Habitat encontrado exitosamente",
-        })
-      } else {
-        setMessage({
-          type: "error",
-          text: "No se encontró ningún habitat con ese ID",
-        })
-      }
-    } catch (error) {
+    if (habitat) {
+      setFoundHabitat(habitat)
+      setMessage({
+        type: "success",
+        text: "Habitat encontrado exitosamente",
+      })
+    } else {
       setMessage({
         type: "error",
-        text: "Error al buscar el habitat. Intenta nuevamente.",
+        text: "No se encontró ningún habitat con ese ID",
       })
-    } finally {
-      setIsSearching(false)
     }
+
+    setIsSearching(false)
   }
 
   const handleAction = () => {

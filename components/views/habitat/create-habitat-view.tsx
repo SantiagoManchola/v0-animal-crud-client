@@ -14,9 +14,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircle2, TreePine } from "lucide-react";
+import { CheckCircle2, TreePine, AlertCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import type { HabitatFormData } from "@/types/habitat";
+import { createHabitat } from "@/lib/utils";
 
 export function CreateHabitatView() {
   const [formData, setFormData] = useState<HabitatFormData>({
@@ -27,46 +28,37 @@ export function CreateHabitatView() {
     isCovered: false,
   });
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccess(false);
+    setError(null);
 
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-      
-      if (!response.ok) {
-        throw new Error('Failed to create habitat')
-      }
-      
-      const data = await response.json()
-      console.log('Habitat created:', data)
-      setSuccess(true)
-      
-      // Reset form
-      setFormData({
-        id: 0,
-        name: "",
-        area: 0,
-        establishedDate: "",
-        isVisitorAccessible: false,
-        isCovered: false,
-      })
-    } catch (error) {
-      console.error('Error creating habitat:', error)
+    // Format establishedDate to include seconds if not present
+    let establishedDate = formData.establishedDate;
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(establishedDate)) {
+      establishedDate += ":00";
     }
-    */
 
-    // Temporary: Simulate success
-    console.log("Habitat created (simulated):", formData);
+    const dataToSend = {
+      ...formData,
+      establishedDate,
+    };
+
+    const result = await createHabitat(dataToSend);
+
+    if (!result) {
+      setError("Error al crear el habitat. Intenta nuevamente.");
+      return;
+    }
+
+    if ((result as any).error409) {
+      setError("Ya existe un habitat con ese ID. Por favor usa otro.");
+      return;
+    }
+
+    console.log("Habitat created:", result);
     setSuccess(true);
 
     // Reset form
@@ -103,6 +95,13 @@ export function CreateHabitatView() {
             <AlertDescription className="text-green-600">
               Habitat creado exitosamente!
             </AlertDescription>
+          </Alert>
+        )}
+
+        {error && (
+          <Alert className="mb-6 border-destructive bg-destructive/10">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 

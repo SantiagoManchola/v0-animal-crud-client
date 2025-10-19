@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import type { Habitat, HabitatEditData } from "@/types/habitat"
-import { Edit, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Habitat, HabitatEditData } from "@/types/habitat";
+import { Edit, AlertCircle, CheckCircle, ArrowLeft } from "lucide-react";
+import { updateHabitat } from "@/lib/utils";
 
 interface EditHabitatViewProps {
   habitat: Habitat
@@ -20,9 +21,9 @@ export function EditHabitatView({ habitat, onBack }: EditHabitatViewProps) {
     id: habitat.id,
     name: habitat.name,
     area: habitat.area,
-    establishedDate: habitat.establishedDate,
+    establishedDate: habitat.establishedDate.slice(0, 16), // Format for datetime-local input
     isCovered: habitat.isCovered,
-  })
+  });
   const [isEditing, setIsEditing] = useState(false)
   const [message, setMessage] = useState<{
     type: "success" | "error"
@@ -49,49 +50,32 @@ export function EditHabitatView({ habitat, onBack }: EditHabitatViewProps) {
     setIsEditing(true)
     setMessage(null)
 
-    try {
-      // TODO: Uncomment when API is ready
-      /*
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${editData.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(editData),
-      })
-      
-      if (response.ok) {
-        const result = await response.json()
-        setMessage({
-          type: "success",
-          text: `Habitat "${result.name}" actualizado exitosamente`,
-        })
-      } else {
-        setMessage({
-          type: "error",
-          text: "Error al actualizar el habitat. Intenta nuevamente.",
-        })
-      }
-      */
+    // Format establishedDate to include seconds if not present
+    let establishedDate = editData.establishedDate
+    if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(establishedDate)) {
+      establishedDate += ":00"
+    }
 
-      // Temporary: Simulate success
-      let establishedDate = editData.establishedDate
-      if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(establishedDate)) {
-        establishedDate += ":00"
-      }
-      console.log("Habitat updated (simulated):", { ...editData, establishedDate })
+    const dataToSend = {
+      ...editData,
+      establishedDate,
+    }
+
+    const result = await updateHabitat(dataToSend)
+
+    if (result) {
       setMessage({
         type: "success",
-        text: `Habitat "${editData.name}" actualizado exitosamente`,
+        text: `Habitat "${result.name}" actualizado exitosamente`,
       })
-    } catch (error) {
+    } else {
       setMessage({
         type: "error",
         text: "Error al actualizar el habitat. Intenta nuevamente.",
       })
-    } finally {
-      setIsEditing(false)
     }
+
+    setIsEditing(false)
   }
 
   return (

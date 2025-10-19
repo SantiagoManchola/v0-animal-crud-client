@@ -1,88 +1,100 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
-import type { Animal } from "@/types/animal"
-import { fetchAnimals } from "@/lib/utils"
-import { Search, AlertCircle, CheckCircle, TreePine, Home } from "lucide-react"
+import { useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import type { Animal } from "@/types/animal";
+import { fetchAnimals } from "@/lib/utils";
+import { Search, AlertCircle, CheckCircle, TreePine, Home } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 interface SearchViewProps {
-  onAnimalFound: (animal: Animal) => void
-  title: string
-  description: string
-  actionLabel: string
+  onAnimalFound: (animal: Animal) => void;
+  title: string;
+  description: string;
+  actionLabel: string;
 }
 
-export function SearchView({ onAnimalFound, title, description, actionLabel }: SearchViewProps) {
-  const [searchId, setSearchId] = useState("")
-  const [foundAnimal, setFoundAnimal] = useState<Animal | null>(null)
-  const [isSearching, setIsSearching] = useState(false)
+export function SearchView({
+  onAnimalFound,
+  title,
+  description,
+  actionLabel,
+}: SearchViewProps) {
+  const [searchId, setSearchId] = useState("");
+  const [foundAnimal, setFoundAnimal] = useState<Animal | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
   const [message, setMessage] = useState<{
-    type: "success" | "error"
-    text: string
-  } | null>(null)
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
   const handleSearch = async () => {
     if (!searchId.trim() || isNaN(Number(searchId))) {
       setMessage({
         type: "error",
         text: "Por favor ingresa un ID numérico válido",
-      })
-      return
+      });
+      return;
     }
 
-    setIsSearching(true)
-    setMessage(null)
-    setFoundAnimal(null)
+    setIsSearching(true);
+    setMessage(null);
+    setFoundAnimal(null);
 
     try {
-      const animals = await fetchAnimals()
+      const animals = await fetchAnimals();
       if (!animals) {
         setMessage({
           type: "error",
           text: "No se pudo obtener la lista de animales del servidor.",
-        })
-        return
+        });
+        return;
       }
-      const animal = animals.find((a) => a.id === Number(searchId))
+      const animal = animals.find((a) => a.id === Number(searchId));
       if (animal) {
-        setFoundAnimal(animal)
+        setFoundAnimal(animal);
         setMessage({
           type: "success",
           text: "Animal encontrado exitosamente",
-        })
+        });
       } else {
         setMessage({
           type: "error",
           text: "No se encontró ningún animal con ese ID",
-        })
+        });
       }
     } catch (error) {
       setMessage({
         type: "error",
         text: "Error al buscar el animal. Intenta nuevamente.",
-      })
+      });
     } finally {
-      setIsSearching(false)
+      setIsSearching(false);
     }
-  }
+  };
 
   const handleAction = () => {
     if (foundAnimal) {
-      onAnimalFound(foundAnimal)
+      onAnimalFound(foundAnimal);
     }
-  }
+  };
 
   const resetSearch = () => {
-    setSearchId("")
-    setFoundAnimal(null)
-    setMessage(null)
-  }
+    setSearchId("");
+    setFoundAnimal(null);
+    setMessage(null);
+  };
 
   return (
     <div className="p-8 max-w-4xl mx-auto">
@@ -99,7 +111,9 @@ export function SearchView({ onAnimalFound, title, description, actionLabel }: S
               <Search className="h-5 w-5" />
               Buscar Animal
             </CardTitle>
-            <CardDescription>Ingresa el ID numérico del animal que deseas buscar</CardDescription>
+            <CardDescription>
+              Ingresa el ID numérico del animal que deseas buscar
+            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -112,14 +126,18 @@ export function SearchView({ onAnimalFound, title, description, actionLabel }: S
                 onChange={(e) => setSearchId(e.target.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
-                    handleSearch()
+                    handleSearch();
                   }
                 }}
               />
             </div>
 
             <div className="flex gap-2">
-              <Button onClick={handleSearch} disabled={isSearching} className="flex-1">
+              <Button
+                onClick={handleSearch}
+                disabled={isSearching}
+                className="flex-1"
+              >
                 {isSearching ? "Buscando..." : "Buscar Animal"}
               </Button>
               <Button onClick={resetSearch} variant="outline">
@@ -142,11 +160,15 @@ export function SearchView({ onAnimalFound, title, description, actionLabel }: S
             <CardContent className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">ID</span>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    ID
+                  </span>
                   <p className="font-mono text-lg">{foundAnimal.id}</p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">Nombre</span>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Nombre
+                  </span>
                   <p className="text-lg font-semibold flex items-center gap-2">
                     {foundAnimal.isWild ? (
                       <TreePine className="h-5 w-5 text-green-600" />
@@ -157,20 +179,48 @@ export function SearchView({ onAnimalFound, title, description, actionLabel }: S
                   </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">Peso</span>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Peso
+                  </span>
                   <p className="text-lg">{foundAnimal.weight} kg</p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">Fecha de Nacimiento</span>
-                  <p className="text-lg">{new Date(foundAnimal.birthDateTime).toLocaleString()}</p>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Fecha de Nacimiento
+                  </span>
+                  <p className="text-lg">
+                    {new Date(foundAnimal.birthDateTime).toLocaleString()}
+                  </p>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">Tipo</span>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Tipo
+                  </span>
                   <div className="mt-1">
-                    <Badge variant={foundAnimal.isWild ? "default" : "secondary"}>
+                    <Badge
+                      variant={foundAnimal.isWild ? "default" : "secondary"}
+                    >
                       {foundAnimal.isWild ? "Salvaje" : "No salvaje"}
                     </Badge>
                   </div>
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Hábitat
+                  </span>
+                  <p className="text-lg">
+                    {foundAnimal.habitat?.name ? (
+                      <div className="flex items-center gap-1">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        {foundAnimal.habitat?.name}
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="h-4 w-4" />
+                        <span className="italic">Sin hábitat</span>
+                      </div>
+                    )}
+                  </p>
                 </div>
               </div>
 
@@ -184,11 +234,19 @@ export function SearchView({ onAnimalFound, title, description, actionLabel }: S
 
       {/* Mensajes */}
       {message && (
-        <Alert className={`mt-6 ${message.type === "error" ? "border-destructive" : "border-green-500"}`}>
-          {message.type === "error" ? <AlertCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+        <Alert
+          className={`mt-6 ${
+            message.type === "error" ? "border-destructive" : "border-green-500"
+          }`}
+        >
+          {message.type === "error" ? (
+            <AlertCircle className="h-4 w-4" />
+          ) : (
+            <CheckCircle className="h-4 w-4" />
+          )}
           <AlertDescription>{message.text}</AlertDescription>
         </Alert>
       )}
     </div>
-  )
+  );
 }

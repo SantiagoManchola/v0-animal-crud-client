@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -25,20 +24,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Animal, Habitat } from "@/types";
+import type { Animal } from "@/types/animal";
+
 import { fetchAnimals as fetchAnimalsAPI } from "@/lib/utils";
 import { List, Filter, TreePine, Home, MapPin } from "lucide-react";
 
 export function ListAllView() {
   const [animals, setAnimals] = useState<Animal[]>([]);
-  const [habitats, setHabitats] = useState<Habitat[]>([]);
   const [filter, setFilter] = useState<"all" | "wild" | "no_wild">("all");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAnimals(filter);
-    fetchHabitats();
   }, [filter]);
 
   const fetchAnimals = async (
@@ -60,63 +58,6 @@ export function ListAllView() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const fetchHabitats = async () => {
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats`)
-      if (response.ok) {
-        const data = await response.json()
-        setHabitats(data)
-      }
-    } catch (error) {
-      console.error('Error fetching habitats:', error)
-    }
-    */
-
-    // Temporary: Mock data
-    const mockHabitats: Habitat[] = [
-      {
-        id: 1001,
-        name: "Sabana Africana",
-        area: 2500.5,
-        establishedDate: "2020-03-15T10:00:00",
-        isVisitorAccessible: true,
-        isCovered: false,
-      },
-      {
-        id: 1002,
-        name: "Bosque Tropical",
-        area: 1800.75,
-        establishedDate: "2019-07-22T14:30:00",
-        isVisitorAccessible: true,
-        isCovered: true,
-      },
-      {
-        id: 1003,
-        name: "Área de Cuarentena",
-        area: 500.0,
-        establishedDate: "2021-01-10T09:00:00",
-        isVisitorAccessible: false,
-        isCovered: true,
-      },
-      {
-        id: 1004,
-        name: "Acuario Principal",
-        area: 3200.0,
-        establishedDate: "2018-11-05T11:00:00",
-        isVisitorAccessible: true,
-        isCovered: true,
-      },
-    ];
-    setHabitats(mockHabitats);
-  };
-
-  const getHabitatName = (habitatId: number) => {
-    const habitat = habitats.find((h) => h.id === habitatId);
-    return habitat ? habitat.name : "Sin habitat";
   };
 
   const filteredAnimals = animals;
@@ -229,10 +170,17 @@ export function ListAllView() {
                         {new Date(animal.birthDateTime).toLocaleString()}
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-1 text-sm">
-                          <MapPin className="h-3 w-3 text-muted-foreground" />
-                          {getHabitatName(animal.habitatId)}
-                        </div>
+                        {animal.habitat ? (
+                          <div className="flex items-center gap-1 text-sm">
+                            <MapPin className="h-3 w-3 text-muted-foreground" />
+                            {animal.habitat.name}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <MapPin className="h-3 w-3" />
+                            <span className="italic">Sin hábitat</span>
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell>
                         <Badge

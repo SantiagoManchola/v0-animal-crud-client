@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { Habitat } from "@/types/habitat";
+import { fetchHabitatById, deleteHabitat } from "@/lib/utils";
 
 export function SearchDeleteHabitatView() {
   const [searchId, setSearchId] = useState("");
@@ -35,69 +36,30 @@ export function SearchDeleteHabitatView() {
     setHabitat(null);
     setSuccess(false);
 
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${searchId}`)
-      
-      if (!response.ok) {
-        throw new Error('Habitat not found')
-      }
-      
-      const data = await response.json()
-      setHabitat(data)
-    } catch (error) {
-      console.error('Error fetching habitat:', error)
-    } finally {
-      setLoading(false)
+    const data = await fetchHabitatById(Number.parseInt(searchId));
+
+    if (data) {
+      setHabitat(data);
     }
-    */
 
-    // Temporary: Mock data
-    const mockHabitat: Habitat = {
-      id: Number.parseInt(searchId),
-      name: "Sabana Africana",
-      area: 2500.5,
-      establishedDate: "2020-03-15T10:00:00",
-      isCovered: false,
-    };
-
-    setHabitat(mockHabitat);
     setLoading(false);
   };
 
   const handleDelete = async () => {
     if (!habitat) return;
 
-    // TODO: Uncomment when API is ready
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/habitats/${habitat.id}`, {
-        method: 'DELETE',
-      })
-      
-      if (!response.ok) {
-        throw new Error('Failed to delete habitat')
-      }
-      
-      console.log('Habitat deleted:', habitat.id)
-      setSuccess(true)
-      setHabitat(null)
-      setSearchId("")
-    } catch (error) {
-      console.error('Error deleting habitat:', error)
+    const result = await deleteHabitat(habitat.id);
+
+    if (result) {
+      console.log("Habitat deleted:", habitat.id);
+      setSuccess(true);
+      setHabitat(null);
+      setSearchId("");
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
     }
-    */
-
-    // Temporary: Simulate success
-    console.log("Habitat deleted (simulated):", habitat.id);
-    setSuccess(true);
-    setHabitat(null);
-    setSearchId("");
-
-    setTimeout(() => {
-      setSuccess(false);
-    }, 3000);
   };
 
   const formatDateTime = (dateTime: string) => {
