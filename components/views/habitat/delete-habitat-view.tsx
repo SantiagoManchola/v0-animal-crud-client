@@ -29,7 +29,7 @@ export function DeleteHabitatView({ habitat, onBack, onDeleted }: DeleteHabitatV
 
     const result = await deleteHabitat(habitat.id)
 
-    if (result) {
+    if (result === true) {
       setMessage({
         type: "success",
         text: `Habitat "${habitat.name}" (ID: ${habitat.id}) eliminado exitosamente`,
@@ -37,11 +37,18 @@ export function DeleteHabitatView({ habitat, onBack, onDeleted }: DeleteHabitatV
       setTimeout(() => {
         onDeleted()
       }, 2000)
+    } else if (typeof result === "object" && result.error409) {
+      setMessage({
+        type: "error",
+        text: result.message,
+      })
+      setShowConfirmation(false)
     } else {
       setMessage({
         type: "error",
         text: "Error al eliminar el habitat. Intenta nuevamente.",
       })
+      setShowConfirmation(false)
     }
 
     setIsDeleting(false)

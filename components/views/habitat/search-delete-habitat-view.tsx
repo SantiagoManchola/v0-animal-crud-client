@@ -28,6 +28,7 @@ export function SearchDeleteHabitatView() {
   const [habitat, setHabitat] = useState<Habitat | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSearch = async () => {
     if (!searchId) return;
@@ -35,6 +36,7 @@ export function SearchDeleteHabitatView() {
     setLoading(true);
     setHabitat(null);
     setSuccess(false);
+    setError(null);
 
     const data = await fetchHabitatById(Number.parseInt(searchId));
 
@@ -48,9 +50,10 @@ export function SearchDeleteHabitatView() {
   const handleDelete = async () => {
     if (!habitat) return;
 
+    setError(null);
     const result = await deleteHabitat(habitat.id);
 
-    if (result) {
+    if (result === true) {
       console.log("Habitat deleted:", habitat.id);
       setSuccess(true);
       setHabitat(null);
@@ -59,6 +62,10 @@ export function SearchDeleteHabitatView() {
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
+    } else if (typeof result === "object" && result.error409) {
+      setError(result.message);
+    } else {
+      setError("Error al eliminar el habitat. Intenta nuevamente.");
     }
   };
 
@@ -121,6 +128,13 @@ export function SearchDeleteHabitatView() {
             <AlertDescription className="text-green-600">
               Habitat eliminado exitosamente!
             </AlertDescription>
+          </Alert>
+        )}
+
+        {error && (
+          <Alert className="mb-6 border-destructive bg-destructive/10">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
 

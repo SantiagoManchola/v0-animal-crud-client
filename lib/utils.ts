@@ -118,11 +118,22 @@ export async function updateHabitat(
   }
 }
 
-export async function deleteHabitat(id: number): Promise<boolean> {
+export async function deleteHabitat(
+  id: number
+): Promise<boolean | { error409: true; message: string }> {
   try {
     const res = await fetch(`${API_URL}/habitats/${id}`, {
       method: "DELETE",
     });
+    if (res.status === 409) {
+      const errorData = await res.json();
+      return {
+        error409: true,
+        message:
+          errorData.message ||
+          "No se puede eliminar el habitat porque está asociado a uno o más animales.",
+      };
+    }
     if (!res.ok) throw new Error("Error al eliminar hábitat");
     return true;
   } catch (error) {
