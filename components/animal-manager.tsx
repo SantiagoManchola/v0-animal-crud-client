@@ -16,8 +16,17 @@ import { DeleteHabitatView } from "./views/habitat/delete-habitat-view";
 import { SearchAnimalsView } from "./views/search-animals-view";
 import { HabitatDetailView } from "./views/habitat/habitat-detail-view";
 import { HabitatsWithAnimalsView } from "./views/habitat/habitats-with-animals-view";
+import ListAllKeepersView from "./views/keeper/list-all-keepers-view";
+import CreateKeeperView from "./views/keeper/create-keeper-view";
+import EditKeeperView from "./views/keeper/edit-keeper-view";
+import DeleteKeeperView from "./views/keeper/delete-keeper-view";
+import SearchKeeperView from "./views/keeper/search-keeper-view";
+import AssignKeeperView from "./views/keeper/assign-keeper-view";
+import AnimalsWithKeepersView from "./views/keeper/animals-with-keepers-view";
+import AnimalWithKeeperDetailView from "./views/keeper/animal-with-keeper-detail-view";
 import type { Animal } from "@/types/animal";
 import type { Habitat } from "@/types/habitat";
+import type { Keeper } from "@/types/keeper";
 
 export type ViewType =
   | "about"
@@ -35,12 +44,21 @@ export type ViewType =
   | "search-edit-habitat"
   | "edit-habitat"
   | "search-delete-habitat"
-  | "delete-habitat";
+  | "delete-habitat"
+  | "create-keeper"
+  | "list-keepers"
+  | "edit-keeper"
+  | "delete-keeper"
+  | "search-keeper"
+  | "assign-keeper"
+  | "animals-with-keepers"
+  | "animal-keeper-detail";
 
 export function AnimalManager() {
   const [currentView, setCurrentView] = useState<ViewType>("about");
   const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
   const [selectedHabitat, setSelectedHabitat] = useState<Habitat | null>(null);
+  const [selectedKeeper, setSelectedKeeper] = useState<Keeper | null>(null);
 
   const renderView = () => {
     switch (currentView) {
@@ -164,6 +182,54 @@ export function AnimalManager() {
         ) : (
           <AboutView />
         );
+      case "create-keeper":
+        return (
+          <CreateKeeperView
+            onSuccess={() => {
+              setCurrentView("list-keepers");
+            }}
+          />
+        );
+      case "list-keepers":
+        return <ListAllKeepersView />;
+      case "edit-keeper":
+        return selectedKeeper ? (
+          <EditKeeperView
+            keeper={selectedKeeper}
+            onSuccess={() => {
+              setSelectedKeeper(null);
+              setCurrentView("list-keepers");
+            }}
+            onCancel={() => {
+              setSelectedKeeper(null);
+              setCurrentView("list-keepers");
+            }}
+          />
+        ) : (
+          <AboutView />
+        );
+      case "delete-keeper":
+        return (
+          <DeleteKeeperView
+            onSuccess={() => {
+              setCurrentView("list-keepers");
+            }}
+          />
+        );
+      case "search-keeper":
+        return <SearchKeeperView />;
+      case "assign-keeper":
+        return (
+          <AssignKeeperView
+            onSuccess={() => {
+              setCurrentView("animals-with-keepers");
+            }}
+          />
+        );
+      case "animals-with-keepers":
+        return <AnimalsWithKeepersView />;
+      case "animal-keeper-detail":
+        return <AnimalWithKeeperDetailView />;
       default:
         return <AboutView />;
     }

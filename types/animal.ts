@@ -8,6 +8,7 @@ export interface Animal {
     id: number;
     name?: string;
   };
+  keeperId?: number; // Optional keeper assignment
 }
 
 export type AnimalFormData = Animal;

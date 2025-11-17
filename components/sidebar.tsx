@@ -13,6 +13,9 @@ import {
   Search,
   Eye,
   Globe,
+  UserCog,
+  Users,
+  UserPlus,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
@@ -34,6 +37,16 @@ const animalMenuItems = [
     id: "search-delete" as ViewType,
     label: "Buscar para Eliminar",
     icon: Trash2,
+  },
+  {
+    id: "assign-keeper" as ViewType,
+    label: "Asignar Cuidador",
+    icon: UserPlus,
+  },
+  {
+    id: "animals-with-keepers" as ViewType,
+    label: "Animales con Cuidadores",
+    icon: Users,
   },
 ];
 
@@ -60,6 +73,13 @@ const habitatMenuItems = [
     label: "Buscar para Eliminar",
     icon: Trash2,
   },
+];
+
+const keeperMenuItems = [
+  { id: "create-keeper" as ViewType, label: "Crear Cuidador", icon: Plus },
+  { id: "list-keepers" as ViewType, label: "Listar Todos", icon: List },
+  { id: "search-keeper" as ViewType, label: "Búsqueda Avanzada", icon: Search },
+  { id: "animal-keeper-detail" as ViewType, label: "Ver Detalle", icon: Eye },
 ];
 
 export function Sidebar({ currentView, onViewChange }: SidebarProps) {
@@ -162,13 +182,46 @@ export function Sidebar({ currentView, onViewChange }: SidebarProps) {
               })}
             </div>
           </div>
+
+          <Separator className="bg-sidebar-border" />
+
+          <div>
+            <div className="flex items-center gap-2 px-2 mb-2">
+              <UserCog className="h-4 w-4 text-sidebar-foreground/60" />
+              <h2 className="text-xs font-semibold text-sidebar-foreground/60 uppercase tracking-wider">
+                Cuidadores
+              </h2>
+            </div>
+            <div className="space-y-1">
+              {keeperMenuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = currentView === item.id;
+
+                return (
+                  <Button
+                    key={item.id}
+                    variant={isActive ? "default" : "ghost"}
+                    className={`w-full justify-start gap-3 h-10 ${
+                      isActive
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
+                    onClick={() => onViewChange(item.id)}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </nav>
 
       {/* Footer */}
       <div className="p-4 border-t border-sidebar-border">
         <p className="text-xs text-sidebar-foreground/50 text-center">
-          v1.1.0 - Animal CRUD Client
+          v1.2.0 - Animal CRUD Client
         </p>
       </div>
     </div>
