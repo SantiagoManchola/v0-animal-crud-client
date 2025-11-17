@@ -74,7 +74,8 @@ export default function CreateKeeperView({
         const errorData = await response.json();
         setMessage({
           type: "error",
-          text: errorData.message || "Error al crear cuidador. Intenta nuevamente.",
+          text:
+            errorData.message || "Error al crear cuidador. Intenta nuevamente.",
         });
       }
     } catch (error) {
@@ -112,115 +113,115 @@ export default function CreateKeeperView({
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="id">ID (Identificador)</Label>
-              <Input
-                id="id"
-                type="number"
-                value={formData.id || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    id: parseInt(e.target.value) || 0,
-                  })
-                }
-                required
-              />
+                <Input
+                  id="id"
+                  type="number"
+                  value={formData.id || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      id: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  required
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                required
-              />
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  required
+                />
               </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="firstName">Nombre</Label>
-              <Input
-                id="firstName"
-                value={formData.firstName}
-                onChange={(e) =>
-                  setFormData({ ...formData, firstName: e.target.value })
-                }
-                required
-                maxLength={100}
-              />
+                <Input
+                  id="firstName"
+                  value={formData.firstName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
+                  required
+                  maxLength={100}
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="lastName">Apellido</Label>
-              <Input
-                id="lastName"
-                value={formData.lastName}
-                onChange={(e) =>
-                  setFormData({ ...formData, lastName: e.target.value })
-                }
-                required
-                maxLength={100}
-              />
+                <Input
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
+                  required
+                  maxLength={100}
+                />
               </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="hireDate">Fecha de Contratación</Label>
-              <Input
-                id="hireDate"
-                type="date"
-                value={formData.hireDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, hireDate: e.target.value })
-                }
-                required
-              />
+                <Input
+                  id="hireDate"
+                  type="date"
+                  value={formData.hireDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, hireDate: e.target.value })
+                  }
+                  required
+                />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="yearsOfExperience">Años de Experiencia</Label>
-              <Input
-                id="yearsOfExperience"
-                type="number"
-                min="0"
-                value={formData.yearsOfExperience || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    yearsOfExperience: parseInt(e.target.value) || 0,
-                  })
-                }
-                required
-              />
+                <Input
+                  id="yearsOfExperience"
+                  type="number"
+                  min="0"
+                  value={formData.yearsOfExperience || ""}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      yearsOfExperience: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  required
+                />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="specialization">Especialización</Label>
-            <Input
-              id="specialization"
-              value={formData.specialization}
-              onChange={(e) =>
-                setFormData({ ...formData, specialization: e.target.value })
-              }
-              placeholder="ej: Mamíferos, Aves, Reptiles, Acuáticos"
-              required
-            />
+              <Input
+                id="specialization"
+                value={formData.specialization}
+                onChange={(e) =>
+                  setFormData({ ...formData, specialization: e.target.value })
+                }
+                placeholder="ej: Mamíferos, Aves, Reptiles, Acuáticos"
+                required
+              />
             </div>
 
             <div className="flex items-center space-x-2">
-            <Switch
-              id="isActive"
-              checked={formData.isActive}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, isActive: checked })
-              }
-            />
+              <Switch
+                id="isActive"
+                checked={formData.isActive}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isActive: checked })
+                }
+              />
               <Label htmlFor="isActive">¿Está activo?</Label>
             </div>
 

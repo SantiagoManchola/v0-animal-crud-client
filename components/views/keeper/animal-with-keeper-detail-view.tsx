@@ -117,7 +117,9 @@ export default function AnimalWithKeeperDetailView() {
                 <User className="h-5 w-5" />
                 Información del Animal
               </CardTitle>
-              <CardDescription>Detalles del animal seleccionado</CardDescription>
+              <CardDescription>
+                Detalles del animal seleccionado
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -194,9 +196,7 @@ export default function AnimalWithKeeperDetailView() {
                           : "secondary"
                       }
                     >
-                      {animalWithKeeper.keeper.isActive
-                        ? "Activo"
-                        : "Inactivo"}
+                      {animalWithKeeper.keeper.isActive ? "Activo" : "Inactivo"}
                     </Badge>
                   </div>
 

@@ -47,7 +47,10 @@ export default function SearchKeeperView() {
 
   const handleSearch = async () => {
     if (!searchValue) {
-      setMessage({ type: "error", text: "Por favor ingrese un valor de búsqueda" });
+      setMessage({
+        type: "error",
+        text: "Por favor ingrese un valor de búsqueda",
+      });
       return;
     }
 
@@ -76,14 +79,23 @@ export default function SearchKeeperView() {
         const data = await response.json();
         setKeepers(data);
         if (data.length === 0) {
-          setMessage({ type: "error", text: "No se encontraron cuidadores con los criterios especificados" });
+          setMessage({
+            type: "error",
+            text: "No se encontraron cuidadores con los criterios especificados",
+          });
         }
       } else {
-        setMessage({ type: "error", text: "Error en la búsqueda. Intenta nuevamente." });
+        setMessage({
+          type: "error",
+          text: "Error en la búsqueda. Intenta nuevamente.",
+        });
         setKeepers([]);
       }
     } catch (error) {
-      setMessage({ type: "error", text: "Error de conexión. Verifica que el servidor esté disponible." });
+      setMessage({
+        type: "error",
+        text: "Error de conexión. Verifica que el servidor esté disponible.",
+      });
       console.error("Error searching keepers:", error);
       setKeepers([]);
     } finally {
@@ -108,7 +120,9 @@ export default function SearchKeeperView() {
             <Filter className="h-5 w-5" />
             Criterios de Búsqueda
           </CardTitle>
-          <CardDescription>Selecciona el tipo de búsqueda e ingresa el valor</CardDescription>
+          <CardDescription>
+            Selecciona el tipo de búsqueda e ingresa el valor
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-3 gap-4">
@@ -123,7 +137,9 @@ export default function SearchKeeperView() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="name">Nombre</SelectItem>
-                  <SelectItem value="specialization">Especialización</SelectItem>
+                  <SelectItem value="specialization">
+                    Especialización
+                  </SelectItem>
                   <SelectItem value="experience">Experiencia Mínima</SelectItem>
                 </SelectContent>
               </Select>

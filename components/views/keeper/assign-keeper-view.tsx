@@ -234,8 +234,8 @@ export default function AssignKeeperView({
                     {keepers.map((keeper) => (
                       <SelectItem key={keeper.id} value={keeper.id.toString()}>
                         {keeper.firstName} {keeper.lastName} -{" "}
-                        {keeper.specialization} ({keeper.yearsOfExperience}{" "}
-                        años exp.)
+                        {keeper.specialization} ({keeper.yearsOfExperience} años
+                        exp.)
                       </SelectItem>
                     ))}
                   </SelectContent>

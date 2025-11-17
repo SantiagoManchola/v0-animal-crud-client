@@ -63,7 +63,9 @@ export default function EditKeeperView({
         const errorData = await response.json();
         setMessage({
           type: "error",
-          text: errorData.message || "Error al actualizar cuidador. Intenta nuevamente.",
+          text:
+            errorData.message ||
+            "Error al actualizar cuidador. Intenta nuevamente.",
         });
       }
     } catch (error) {
@@ -99,7 +101,8 @@ export default function EditKeeperView({
             Formulario de Edición
           </CardTitle>
           <CardDescription>
-            El ID no se puede editar. Modifica los demás campos según sea necesario.
+            El ID no se puede editar. Modifica los demás campos según sea
+            necesario.
           </CardDescription>
         </CardHeader>
         <CardContent>

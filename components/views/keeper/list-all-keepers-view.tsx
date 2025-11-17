@@ -121,52 +121,56 @@ export default function ListAllKeepersView() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-        {loading ? (
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="text-muted-foreground mt-2">Cargando cuidadores...</p>
-          </div>
-        ) : keepers.length === 0 ? (
-          <div className="text-center py-8">
-            <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">
-              No se encontraron cuidadores con el filtro seleccionado
-            </p>
-          </div>
-        ) : (
-          <div className="rounded-md border">
-            <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Nombre</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Especialización</TableHead>
-                <TableHead>Experiencia</TableHead>
-                <TableHead>Estado</TableHead>
-              </TableRow>
-            </TableHeader>
-              <TableBody>
-                {keepers.map((keeper) => (
-                  <TableRow key={keeper.id}>
-                    <TableCell className="font-mono text-sm">
-                      {keeper.id}
-                    </TableCell>
-                  <TableCell className="font-medium">{`${keeper.firstName} ${keeper.lastName}`}</TableCell>
-                  <TableCell>{keeper.email}</TableCell>
-                  <TableCell>{keeper.specialization}</TableCell>
-                  <TableCell>{keeper.yearsOfExperience} años</TableCell>
-                  <TableCell>
-                    <Badge variant={keeper.isActive ? "default" : "secondary"}>
-                      {keeper.isActive ? "Activo" : "Inactivo"}
-                    </Badge>
-                  </TableCell>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground mt-2">
+                Cargando cuidadores...
+              </p>
+            </div>
+          ) : keepers.length === 0 ? (
+            <div className="text-center py-8">
+              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">
+                No se encontraron cuidadores con el filtro seleccionado
+              </p>
+            </div>
+          ) : (
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Nombre</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Especialización</TableHead>
+                    <TableHead>Experiencia</TableHead>
+                    <TableHead>Estado</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+                </TableHeader>
+                <TableBody>
+                  {keepers.map((keeper) => (
+                    <TableRow key={keeper.id}>
+                      <TableCell className="font-mono text-sm">
+                        {keeper.id}
+                      </TableCell>
+                      <TableCell className="font-medium">{`${keeper.firstName} ${keeper.lastName}`}</TableCell>
+                      <TableCell>{keeper.email}</TableCell>
+                      <TableCell>{keeper.specialization}</TableCell>
+                      <TableCell>{keeper.yearsOfExperience} años</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={keeper.isActive ? "default" : "secondary"}
+                        >
+                          {keeper.isActive ? "Activo" : "Inactivo"}
+                        </Badge>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
